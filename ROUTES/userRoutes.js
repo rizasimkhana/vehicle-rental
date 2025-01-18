@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport'); // Import passport
-const { registerUser, verifyEmail, loginUser, socialLogin } = require('../CONTROLLERS/userController');
+const { registerUser, verifyEmail, loginUser, socialLogin,getAllUsers } = require('../CONTROLLERS/userController');
 
 // Register new user
 router.post('/register', registerUser);
@@ -14,6 +14,8 @@ router.post('/login', loginUser);
 
 // Social login (Google/Facebook)
 router.post('/social-login', socialLogin);
+
+app.get('/users', getAllUsers);
 
 // Redirect to Google for authentication (OAuth)
 router.get('/auth/google',
