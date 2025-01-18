@@ -121,17 +121,38 @@ async function modifyBooking(req, res) {
     booking.endDate = updatedEnd;
     await booking.save();
 
-    // Get user and vehicle info
+    // Log to verify the userId and check if it's valid
+    console.log(`Booking userId: ${booking.userId}`);
+
+    // Get user info by userId
     const user = await User.findById(booking.userId);
+
+    // Check if user exists
+    if (!user) {
+      console.error(`User not found for userId: ${booking.userId}`);
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Ensure that the user has an email
+    if (!user.email) {
+      console.error(`User found but email is missing for userId: ${booking.userId}`);
+      return res.status(400).json({ message: 'User email is not provided' });
+    }
+
     const vehicle = await Vehicle.findById(booking.vehicleId);
 
     // Send updated booking confirmation (email and SMS)
-    await sendBookingConfirmationEmail(user.email, {
-      vehicleId: vehicle,
-      startDate: updatedStart,
-      endDate: updatedEnd,
-      bookingDays: moment(updatedEnd).diff(moment(updatedStart), 'days')
-    });
+    try {
+      await sendBookingConfirmationEmail(user.email, {
+        vehicleId: vehicle,
+        startDate: updatedStart,
+        endDate: updatedEnd,
+        bookingDays: moment(updatedEnd).diff(moment(updatedStart), 'days')
+      });
+    } catch (error) {
+      console.error('Error sending email:', error);
+      return res.status(500).json({ message: 'Failed to send confirmation email' });
+    }
 
     // Respond with updated booking details
     res.status(200).json({
@@ -139,13 +160,11 @@ async function modifyBooking(req, res) {
       booking
     });
   } catch (error) {
+    console.error('Error processing booking:', error);
     res.status(500).json({ message: error.message });
   }
 }
 
-
-// Cancel a booking
-// Soft delete by setting isCanceled to true
 async function cancelBooking(req, res) {
   const { id } = req.params;
 
@@ -155,32 +174,50 @@ async function cancelBooking(req, res) {
       return res.status(404).json({ message: 'Booking not found' });
     }
 
-    // Mark the vehicle as available again
-    await Vehicle.findByIdAndUpdate(booking.vehicleId, { availability: true });
-
-    // Soft delete by setting isCanceled to true
+    // Mark the booking as canceled
     booking.isCanceled = true;
     await booking.save();
 
-    // Get user info for cancellation notifications
+    // Log to verify the userId and check if it's valid
+    console.log(`Booking userId: ${booking.userId}`);
+
+    // Get user info by userId
     const user = await User.findById(booking.userId);
-    const vehicle = await Vehicle.findById(booking.vehicleId);
 
-    // Send  cancellation notifications (email and SMS)
-    await sendBookingcancelledEmail(user.email, {
-      vehicleId: vehicle,
-      startDate: booking.startDate,
-      endDate: booking.endDate
-    });
+    // Check if user exists
+    if (!user) {
+      console.error(`User not found for userId: ${booking.userId}`);
+      return res.status(404).json({ message: 'User not found' });
+    }
 
+    // Ensure that the user has an email
+    if (!user.email) {
+      console.error(`User found but email is missing for userId: ${booking.userId}`);
+      return res.status(400).json({ message: 'User email is not provided' });
+    }
+
+    // Send cancellation email
+    try {
+      await sendBookingcancelledEmail(user.email, booking);
+    } catch (error) {
+      console.error('Error sending cancellation email:', error);
+      return res.status(500).json({ message: 'Failed to send cancellation email' });
+    }
+
+    // Respond with cancellation success
     res.status(200).json({
-      message: 'Booking canceled successfully!'
+      message: 'Booking canceled successfully!',
+      booking
     });
   } catch (error) {
-    console.error("Error canceling booking:", error);
+    console.error('Error processing booking cancellation:', error);
     res.status(500).json({ message: error.message });
   }
 }
+
+
+
+
 
 
 
