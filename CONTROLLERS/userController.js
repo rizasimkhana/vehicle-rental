@@ -278,4 +278,4 @@ const getAllUsers = async (req, res) => {
 };
   
 
-module.exports = { registerUser, verifyEmail, loginUser, socialLogin };
+module.exports = { registerUser, verifyEmail, loginUser, socialLogin,getAllUsers };

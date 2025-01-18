@@ -15,7 +15,7 @@ router.post('/login', loginUser);
 // Social login (Google/Facebook)
 router.post('/social-login', socialLogin);
 
-app.get('/users', getAllUsers);
+router.get('/users', getAllUsers);
 
 // Redirect to Google for authentication (OAuth)
 router.get('/auth/google',
