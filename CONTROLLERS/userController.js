@@ -174,7 +174,7 @@ const loginUser = async (req, res) => {
 
             // Generate JWT token for email/password login
             const jwtToken = jwt.sign(
-                {userId: user._id},
+                { userId: user._id },
                 process.env.JWT_SECRET,
                 { expiresIn: '1h' }
             );
@@ -183,24 +183,26 @@ const loginUser = async (req, res) => {
             return res.status(200).json({
                 message: 'Login successful',
                 token: jwtToken,
-            user: {  // Include user details in the response
-                  userId: user._id,  // Return the userId (instead of googleId)
-                   name: user.name,
-                   email: user.email,
+                user: {  // Include user details in the response
+                    userId: user._id,  // Return the userId (instead of googleId)
+                    name: user.name,
+                    email: user.email,
                     phone: user.phone,
-                  role: user.role,
-                  verified: user.verified,
-              }
-             });
+                    role: user.role,
+                    verified: user.verified,
+                }
+            });
         }
 
         // If neither token nor email/password is provided
-        return res.status(200).json({ message: 'Login successful', token: jwtToken });
+        return res.status(400).json({ message: 'Please provide login credentials or a Google token' });
+
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error', error });
     }
 };
+
 
 // Social Login (Google/Facebook)
 const socialLogin = async (req, res) => {
