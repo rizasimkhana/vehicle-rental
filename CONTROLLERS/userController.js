@@ -132,6 +132,7 @@ const loginUser = async (req, res) => {
                     role: 'user',  // Default role can be 'user', you can customize this
                     picture: payload.picture,
                     googleId: payload.sub,  // Store Google unique ID
+                    userId: payload.sub,    // Explicitly set the userId if it's required
                 });
 
                 // Save the new user to the database
@@ -202,6 +203,7 @@ const loginUser = async (req, res) => {
         res.status(500).json({ message: 'Server error', error });
     }
 };
+
 
 
 // Social Login (Google/Facebook)
