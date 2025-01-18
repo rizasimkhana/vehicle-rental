@@ -225,17 +225,17 @@ const socialLogin = async (req, res) => {
       if (!user) {
         // If the user doesn't exist, create a new user
         user = new User({
-            email,
-            googleId,           // Store Google ID as unique ID
-            userId: googleId,   // Ensure userId is also set to googleId
-            name: payload.name,
-            verified: true,      // Assuming the Google account is verifed
+          email,
+          googleId,           // Store Google ID as unique ID
+          userId: googleId,   // Ensure userId is also set to googleId
+          name: payload.name,
+          verified: true,      // Assuming the Google account is verified
         });
   
         await user.save();
       }
   
-      // Generate a JWT token
+      // Generate a JWT token for the signed-in user
       const jwtToken = jwt.sign(
         { userId: user._id },
         process.env.JWT_SECRET,
@@ -243,11 +243,12 @@ const socialLogin = async (req, res) => {
       );
   
       // Send the JWT token in the response
-      return res.status(200).json({ message: 'Login successful', token: jwtToken });
+      return res.status(200).json({ message: 'Sign-in successful', token: jwtToken });
     } catch (error) {
       console.error('Error verifying Google token:', error);
       return res.status(500).json({ message: 'Error during Google login', error });
     }
-};
+  };
+  
 
 module.exports = { registerUser, verifyEmail, loginUser, socialLogin };
