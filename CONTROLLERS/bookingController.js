@@ -234,6 +234,34 @@ async function getAllBookings(req, res) {
 
 
 
+// Get bookings by vehicleId
+async function getBookingsByVehicle(req, res) {
+  const { vehicleId } = req.params;
+
+  // Validate vehicleId
+  if (!mongoose.Types.ObjectId.isValid(vehicleId)) {
+    return res.status(400).json({ message: 'Invalid vehicle ID' });
+  }
+
+  try {
+    // Query the bookings and populate related user and vehicle details
+    const bookings = await Booking.find({ vehicleId: vehicleId })
+      .populate('userId', 'name email')  // Populate the userId field with the name and email from the User collection
+      .populate('vehicleId', 'make model');  // Populate the vehicleId field with make and model from the Vehicle collection
+
+    if (!bookings || bookings.length === 0) {
+      return res.status(404).json({ message: 'No bookings found for this vehicle' });
+    }
+
+    res.status(200).json({ bookings });
+  } catch (error) {
+    console.error('Error fetching bookings for vehicle:', error);
+    res.status(500).json({ message: error.message });
+  }
+}
+
+
+
 
 
 
@@ -242,5 +270,6 @@ module.exports = {
   modifyBooking,
   cancelBooking,
   getBookingsByUser,
-  getAllBookings
+  getAllBookings,
+  getBookingsByVehicle
 };

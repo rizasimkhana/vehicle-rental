@@ -1,7 +1,7 @@
 // routes/bookingRoutes.js
 const express = require('express');
 const router = express.Router();
-const { createBooking, modifyBooking, cancelBooking,getBookingsByUser,getAllBookings} = require('../CONTROLLERS/bookingController');
+const { createBooking, modifyBooking, cancelBooking,getBookingsByVehicle,getAllBookings} = require('../CONTROLLERS/bookingController');
 
 // Route for creating a new booking
 router.post('/create', createBooking);
@@ -12,7 +12,7 @@ router.put('/modify/:id', modifyBooking);
 // Route for canceling a booking
 router.delete('/cancel/:id', cancelBooking);
 
-router.get('/user/:vehicleId', getBookingsByUser);
+router.get('/user/:vehicleId',getBookingsByVehicle);
 
 router.get('/user/', getAllBookings);
 
