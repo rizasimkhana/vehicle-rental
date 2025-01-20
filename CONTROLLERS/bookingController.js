@@ -189,14 +189,14 @@ async function cancelBooking(req, res) {
 
 
 async function getBookingsByUser(req, res) {
-  let { userId } = req.params;
-  userId = userId.trim();
+  let { vehicleId } = req.params;
+  vehicleId = vehicleId.trim();
 
-  console.log('Received userId:', userId); // Log to check the userId format
+  console.log('Received vehicleId:', vehicleId); // Log to check the userId format
 
   try {
     // Query the bookings and populate the related user and vehicle
-    const bookings = await Booking.find({ userId: userId })
+    const bookings = await Booking.find({ vehicleId: vehicleId })
       .populate('userId', 'name')  // Populate the userId field with the name field from the User collection
       .populate('vehicleId', 'make model');  // Populate the vehicleId field with make and model from the Vehicle collection
 

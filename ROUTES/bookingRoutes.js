@@ -12,7 +12,7 @@ router.put('/modify/:id', modifyBooking);
 // Route for canceling a booking
 router.delete('/cancel/:id', cancelBooking);
 
-router.get('/user/:userId', getBookingsByUser);
+router.get('/user/:vehicleId', getBookingsByUser);
 
 router.get('/user/', getAllBookings);
 
